@@ -44,7 +44,12 @@ public class NumberGuessServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             out.println("<h2>Invalid input. Please enter a valid number.</h2>");
         }
-        out.println("<a href='guess'>Play Again</a>");
+                out.println("<a href='guess'>Play Again</a>");
+    }
+
+    public int getTargetNumber() {
+        return this.targetNumber;
     }
 }
+
 
