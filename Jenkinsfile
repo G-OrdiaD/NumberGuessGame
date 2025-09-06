@@ -5,7 +5,7 @@ pipeline {
   options {
     timestamps()
     buildDiscarder(logRotator(numToKeepStr: '20'))
-    // ansiColor('xterm')
+    ansiColor('xterm')
   }
     // Define the tools required for the build
   tools {
