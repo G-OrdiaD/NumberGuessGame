@@ -9,8 +9,8 @@ pipeline {
   }
     // Define the tools required for the build
   tools {
-    jdk 'Java_17' // java version
-    maven 'Maven' // maven version
+    jdk 'Java_11' // Java version make sure to configure in Jenkins global tools
+    maven 'Maven_3.8.4' // Maven version make sure to configure in Jenkins global tools
   }
     // Define environment variables
   environment {
