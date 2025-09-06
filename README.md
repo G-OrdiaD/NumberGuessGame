@@ -14,3 +14,4 @@ mvn package
 - Repo & Quality Lead → GitHub repo structure, docs, code reviews
 
 # Trigger first Jenkins build
+# Trigger first Jenkins build
