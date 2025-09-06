@@ -13,3 +13,4 @@ mvn package
 - Deployment Lead → Maven build, Tomcat setup, WAR deployment  
 - Repo & Quality Lead → GitHub repo structure, docs, code reviews
 
+# Trigger first Jenkins build
