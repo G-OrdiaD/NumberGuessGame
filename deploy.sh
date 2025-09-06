@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+
 set -euo pipefail
 
 # === Config ===
@@ -25,5 +25,5 @@ sleep 2
 sudo "${TOMCAT_HOME}/bin/startup.sh"
 
 echo "Deployment complete!"
-echo "App available at: http://<EC2-Public-IP>:8080/NumberGuessGame-1.0-SNAPSHOT"
+echo "App available at: http://localhost:8080/NumberGuessGame-1.0-SNAPSHOT"
 
