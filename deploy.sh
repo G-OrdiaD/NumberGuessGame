@@ -24,4 +24,3 @@ sudo "${TOMCAT_HOME}/bin/startup.sh"
 
 echo "Deployment complete!"
 echo "App available at: http://localhost:8081/${DEPLOY_NAME}"
-
