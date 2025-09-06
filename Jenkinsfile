@@ -9,21 +9,17 @@ pipeline {
   }
     // Define the tools required for the build
   tools {
-    jdk 'JDK-11'
-    maven 'Maven-3.9'
+    jdk 'JDK-17' // java version
+    maven 'Maven-3.8.4' // maven version
   }
     // Define environment variables
   environment {
     APP_NAME = "NumberGuessGame-1.0-SNAPSHOT" // war name without .war
-    TOMCAT_WEBAPPS = "/opt/tomcat9/webapps"   // tomcat webapps dir
+    TOMCAT_WEBAPPS = "/opt/tomcat/webapps"   // tomcat webapps dir
     DEPLOY_MODE = "local"                    // Local deployment
-    REMOTE_HOST = ""                         // set if DEPLOY_MODE = ssh
-    REMOTE_SSH_CREDENTIALS = "tomcat-ssh"    // Jenkins credential id for SSH
-    TOMCAT_MANAGER_URL = ""                  // if using manager deploy
-    TOMCAT_MANAGER_CREDENTIALS = "tomcat-manager-creds"
   }
 
-// Define the stages of the pipeline
+    // Define the stages of the pipeline
   stages {
     // Checkout the code from SCM
     stage('01 – Checkout Code') {
