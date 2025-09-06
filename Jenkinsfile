@@ -1,42 +1,44 @@
+// Jenkins Pipeline for building, testing, and deploying a Java web application to Tomcat
 pipeline {
   agent any
-
+    // Define global options for the pipeline
   options {
     timestamps()
     buildDiscarder(logRotator(numToKeepStr: '20'))
     ansiColor('xterm')
   }
-
+    // Define the tools required for the build
   tools {
     jdk 'JDK-11'
     maven 'Maven-3.9'
   }
-
+    // Define environment variables
   environment {
-    APP_NAME = "NumberGuessGame"
-    TOMCAT_WEBAPPS = "/opt/tomcat/webapps"   // adjust to your Tomcat path
-    DEPLOY_MODE = "local"                    // choose: local | ssh | manager
+    APP_NAME = "NumberGuessGame-1.0-SNAPSHOT" // war name without .war
+    TOMCAT_WEBAPPS = "/opt/tomcat9/webapps"   // tomcat webapps dir
+    DEPLOY_MODE = "local"                    // Local deployment
     REMOTE_HOST = ""                         // set if DEPLOY_MODE = ssh
     REMOTE_SSH_CREDENTIALS = "tomcat-ssh"    // Jenkins credential id for SSH
     TOMCAT_MANAGER_URL = ""                  // if using manager deploy
     TOMCAT_MANAGER_CREDENTIALS = "tomcat-manager-creds"
   }
 
+// Define the stages of the pipeline
   stages {
-
+    // Checkout the code from SCM
     stage('01 – Checkout Code') {
       steps {
         checkout scm
       }
     }
-
+    // Build the application using Maven
     stage('02 – Build with Maven') {
       steps {
         sh 'mvn -version'
         sh 'mvn -B -DskipTests=false clean compile'
       }
     }
-
+    // Run unit tests and collect results
     stage('03 – Run Unit Tests') {
       steps {
         sh 'mvn -B test'
@@ -47,7 +49,7 @@ pipeline {
         }
       }
     }
-
+    // Package the application as a WAR file
     stage('04 – Package WAR File') {
       steps {
         sh 'mvn -B package -DskipTests'
@@ -58,7 +60,7 @@ pipeline {
         }
       }
     }
-
+    // Deploy the WAR to Tomcat
     stage('05 – Deploy to Tomcat') {
       steps {
         script {
@@ -87,7 +89,7 @@ pipeline {
         }
       }
     }
-
+    // Simple smoke test to verify deployment
     stage('06 – Smoke Test') {
       steps {
         script {
@@ -99,7 +101,7 @@ pipeline {
       }
     }
   }
-
+    // Post actions for success/failure notifications and artifact archiving
   post {
     success {
       echo "✅ Pipeline succeeded for build #${env.BUILD_NUMBER}"
