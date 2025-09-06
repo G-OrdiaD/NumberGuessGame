@@ -5,12 +5,12 @@ pipeline {
   options {
     timestamps()
     buildDiscarder(logRotator(numToKeepStr: '20'))
-    ansiColor('xterm')
+    // ansiColor('xterm')
   }
     // Define the tools required for the build
   tools {
-    jdk 'JDK-17' // java version
-    maven 'Maven-3.8.4' // maven version
+    jdk 'Java_17' // java version
+    maven 'Maven' // maven version
   }
     // Define environment variables
   environment {
