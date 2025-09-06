@@ -3,27 +3,25 @@ set -euo pipefail
 
 # === Config ===
 TOMCAT_HOME="/opt/tomcat"
-WAR_PATH="target/NumberGuessGame-1.0-SNAPSHOT.war"   # leave as Maven built it
+WAR_SOURCE="target/NumberGuessGame-1.0-SNAPSHOT.war" # Path to the built WAR file
+DEPLOY_NAME="NumberGuessGame-1.0-SNAPSHOT" # Name of the deployed app
 
-# === Build ===
-echo "[1/4] Building WAR with Maven..."
-mvn clean package -DskipTests
 
 # === Undeploy old app ===
-echo "[2/4] Removing previous deployment (if any)..."
-sudo rm -rf "${TOMCAT_HOME}/webapps/NumberGuessGame-1.0-SNAPSHOT" \
-            "${TOMCAT_HOME}/webapps/NumberGuessGame-1.0-SNAPSHOT.war" || true
+echo "[1/3] Removing previous deployment (if any)..."
+sudo rm -rf "${TOMCAT_HOME}/webapps/${DEPLOY_NAME}" \
+            "${TOMCAT_HOME}/webapps/${DEPLOY_NAME}.war" || true
 
 # === Deploy new WAR ===
-echo "[3/4] Copying new WAR to Tomcat webapps..."
-sudo cp "${WAR_PATH}" "${TOMCAT_HOME}/webapps/"
+echo "[2/3] Copying new WAR to Tomcat webapps..."
+sudo cp "${WAR_SOURCE}" "${TOMCAT_HOME}/webapps/${DEPLOY_NAME}.war"
 
 # === Restart Tomcat ===
-echo "[4/4] Restarting Tomcat..."
+echo "[3/3] Restarting Tomcat..."
 sudo "${TOMCAT_HOME}/bin/shutdown.sh" || true
 sleep 2
 sudo "${TOMCAT_HOME}/bin/startup.sh"
 
 echo "Deployment complete!"
-echo "App available at: http://localhost:8080/NumberGuessGame-1.0-SNAPSHOT"
+echo "App available at: http://localhost:8081/${DEPLOY_NAME}"
 

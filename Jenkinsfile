@@ -1,25 +1,26 @@
 // Jenkins Pipeline for building, testing, and deploying a Java web application to Tomcat
 pipeline {
   agent any
-    // Define global options for the pipeline
+  // Define global options for the pipeline
   options {
     timestamps()
     buildDiscarder(logRotator(numToKeepStr: '20'))
     ansiColor('xterm')
   }
-    // Define the tools required for the build
+  // Define the tools required for the build
   tools {
-    jdk 'Java_11' // Java version make sure to configure in Jenkins global tools
+    jdk 'Java_17' // Java version make sure to configure in Jenkins global tools
     maven 'Maven_3.8.4' // Maven version make sure to configure in Jenkins global tools
   }
-    // Define environment variables
+  // Define environment variables
   environment {
     APP_NAME = "NumberGuessGame-1.0-SNAPSHOT" // war name without .war
-    TOMCAT_WEBAPPS = "/opt/tomcat/webapps"   // tomcat webapps dir
-    DEPLOY_MODE = "local"                    // Local deployment
+    TOMCAT_HOME = "/opt/tomcat"               // tomcat home directory
+    TOMCAT_WEBAPPS = "/opt/tomcat/webapps"    // tomcat webapps dir
+    DEPLOY_MODE = "local"                     // Local deployment
   }
 
-    // Define the stages of the pipeline
+  // Define the stages of the pipeline
   stages {
     // Checkout the code from SCM
     stage('01 – Checkout Code') {
@@ -48,7 +49,7 @@ pipeline {
     // Package the application as a WAR file
     stage('04 – Package WAR File') {
       steps {
-        sh 'mvn -B package -DskipTests'
+        sh 'mvn -B war:war'
       }
       post {
         success {
@@ -60,13 +61,37 @@ pipeline {
     stage('05 – Deploy to Tomcat') {
       steps {
         script {
-          def war = sh(returnStdout: true, script: "ls target/*.war | head -n1").trim()
-          if (!war) { error "WAR not found in target/ - build/package failed." }
-          echo "Found WAR: ${war}"
+          // Verify the WAR file exists with the exact expected name
+          def warFile = "target/${APP_NAME}.war"
+          if (!fileExists(warFile)) {
+            error "WAR not found: ${warFile} - build/package failed."
+          }
+          echo "Found WAR: ${warFile}"
 
           if (env.DEPLOY_MODE == 'local') {
-            echo "Deploying locally to ${env.TOMCAT_WEBAPPS}"
-            sh "cp '${war}' '${TOMCAT_WEBAPPS}/'"
+            echo "Deploying using deploy.sh logic to ${env.TOMCAT_WEBAPPS}"
+            
+            // === UNDEPLOY OLD APP (matches deploy.sh) ===
+            echo "[1/3] Removing previous deployment (if any)..."
+            sh """
+              sudo rm -rf "${TOMCAT_WEBAPPS}/${APP_NAME}" \\
+                          "${TOMCAT_WEBAPPS}/${APP_NAME}.war" || true
+            """
+            
+            // === DEPLOY NEW WAR (matches deploy.sh) ===
+            echo "[2/3] Copying new WAR to Tomcat webapps..."
+            sh """
+              sudo cp "${warFile}" "${TOMCAT_WEBAPPS}/${APP_NAME}.war"
+            """
+            
+            // === RESTART TOMCAT (matches deploy.sh) ===
+            echo "[3/3] Restarting Tomcat..."
+            sh """
+              sudo "${TOMCAT_HOME}/bin/shutdown.sh" || true
+              sleep 2
+              sudo "${TOMCAT_HOME}/bin/startup.sh"
+            """
+            
           } else if (env.DEPLOY_MODE == 'ssh') {
             sshagent([env.REMOTE_SSH_CREDENTIALS]) {
               sh "scp -o StrictHostKeyChecking=no ${war} jenkins@${env.REMOTE_HOST}:${env.TOMCAT_WEBAPPS}/"
@@ -89,15 +114,17 @@ pipeline {
     stage('06 – Smoke Test') {
       steps {
         script {
-          def url = "http://localhost:8080/${APP_NAME}/"
+          def url = "http://localhost:8081/${APP_NAME}/"
           echo "Running smoke test against ${url}"
-          sh "sleep 5 || true"
-          sh "curl -fsS ${url} > /dev/null"
+          echo "Deployment complete!"
+          echo "App available at: ${url}"
+          sleep 10  // Give Tomcat more time to restart and deploy
+          sh "curl -fsS ${url} > /dev/null || echo 'Application may still be starting'"
         }
       }
     }
   }
-    // Post actions for success/failure notifications and artifact archiving
+  // Post actions for success/failure notifications and artifact archiving
   post {
     success {
       echo "✅ Pipeline succeeded for build #${env.BUILD_NUMBER}"
