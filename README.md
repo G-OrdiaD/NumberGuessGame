@@ -16,12 +16,12 @@ Version Control: GitHub
 
 ## Pipeline Stages 🔧 
 
-✅ Code Checkout - Automated git clone from GitHub
-✅ Compile & Build - Maven compilation and packaging
-✅ Unit Testing - Automated JUnit test execution
-✅ WAR Packaging - Executable web archive creation
-✅ Automated Deployment - Zero-downtime deployment to Tomcat
-✅ Smoke Testing - Automated verification of deployed application
+1. Code Checkout - Automated git clone from GitHub
+2. Compile & Build - Maven compilation and packaging
+3. Unit Testing - Automated JUnit test execution
+4.  WAR Packaging - Executable web archive creation
+5. Automated Deployment - Zero-downtime deployment to Tomcat
+6. Smoke Testing - Automated verification of deployed application
 
 ## Automation Features 🤖 
 
@@ -31,11 +31,6 @@ Artifact Archiving: Historical build artifacts stored in Jenkins
 Email Notifications: Build status alerts to team members
 Quality Gates: Automated testing before deployment
 
-## How to build & run locally
-```bash
-mvn clean test
-mvn package
-```
 
 ## Team Roles & Responsibilities 👥
 
@@ -57,8 +52,7 @@ Code review enforcement
 Documentation maintenance
 Quality assurance standards
 
-## Troubleshooting 🚨
-
+## Troubleshooting  🚨
 If automation fails:
 
 1. Check Jenkins build console for errors
