@@ -133,7 +133,7 @@ pipeline {
       echo "❌ Pipeline failed for build #${env.BUILD_NUMBER}"
     }
     always {
-      archiveArtifacts allowEmptyArchive: true, artifacts: 'target/surefire-reports/**/*.xml'
+      archiveArtifacts allowEmptyArchive: true, artifacts: 'target/surefire-reports/**/*.xml' // Archive test reports
     }
   }
 }
