@@ -92,11 +92,11 @@ pipeline {
               sudo "${TOMCAT_HOME}/bin/startup.sh"
             """
             
-          } else if (env.DEPLOY_MODE == 'ssh') {
+          } else if (env.DEPLOY_MODE == 'ssh') { // SSH deployment
             sshagent([env.REMOTE_SSH_CREDENTIALS]) {
               sh "scp -o StrictHostKeyChecking=no ${war} jenkins@${env.REMOTE_HOST}:${env.TOMCAT_WEBAPPS}/"
             }
-          } else if (env.DEPLOY_MODE == 'manager') {
+          } else if (env.DEPLOY_MODE == 'manager') { // Tomcat Manager deployment
             withCredentials([usernamePassword(credentialsId: env.TOMCAT_MANAGER_CREDENTIALS, usernameVariable: 'TM_USER', passwordVariable: 'TM_PASS')]) {
               def contextPath = "/${APP_NAME}"
               sh """
