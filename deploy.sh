@@ -23,4 +23,4 @@ sleep 2
 sudo "${TOMCAT_HOME}/bin/startup.sh"
 
 echo "Deployment complete!"
-echo "App available at: http://localhost:8081/${DEPLOY_NAME}"
+echo "App available at: http://localhost:8081/${DEPLOY_NAME}" ## Localhost = your server IP
