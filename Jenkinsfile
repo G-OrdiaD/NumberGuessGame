@@ -74,14 +74,14 @@ pipeline {
             // === UNDEPLOY OLD APP (matches deploy.sh) ===
             echo "[1/3] Removing previous deployment (if any)..."
             sh """
-              sudo rm -rf "${TOMCAT_WEBAPPS}/${APP_NAME}" \\
-                          "${TOMCAT_WEBAPPS}/${APP_NAME}.war" || true
+              rm -rf "${TOMCAT_WEBAPPS}/${APP_NAME}" \\
+                      "${TOMCAT_WEBAPPS}/${APP_NAME}.war" || true
             """
             
             // === DEPLOY NEW WAR (matches deploy.sh) ===
             echo "[2/3] Copying new WAR to Tomcat webapps..."
             sh """
-              sudo cp "${warFile}" "${TOMCAT_WEBAPPS}/${APP_NAME}.war"
+              cp "${warFile}" "${TOMCAT_WEBAPPS}/${APP_NAME}.war"
             """
             
             // === RESTART TOMCAT (matches deploy.sh) ===
